@@ -1,1 +1,2 @@
-pub trait CRUDRepository {}
+pub mod exampleRepository;
+
