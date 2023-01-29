@@ -1,6 +1,8 @@
-pub trait CRUDRepository<Entity = Self> {
-    fn save(&self) -> Result<Entity, Error>;
-    fn load() -> Result<Entity, Error>;
-    fn edit(&self, updatedEntity: Entity) -> Result<Entity, Error>;
-    fn delete(&self) -> Result<Entity, Error>;
+pub struct Error;
+
+pub trait CRUDRepository: Sized {
+    fn save(&self) -> Result<Self, Error>;
+    fn load() -> Result<Self, Error>;
+    fn edit(&self, updated_entity: Self) -> Result<Self, Error>;
+    fn delete(&self) -> Result<Self, Error>;
 }

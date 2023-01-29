@@ -1,10 +1,13 @@
+use crate::{lib::crud::CRUDRepository, repository::exampleRepository::ExampleData};
 use actix_web::{get, post, web, HttpResponse, Responder, Scope};
 
 pub fn example_service() -> Scope {
     web::scope("/example").service(hello).service(echo)
 }
 
-// Could build a macro to generate a simple CRUD API for me?
+async fn all() -> impl Responder {
+    HttpResponse::Ok().body(ExampleData::load())
+}
 
 #[get("")]
 async fn hello() -> impl Responder {
