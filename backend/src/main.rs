@@ -10,11 +10,19 @@ use api::task::{
     fail_task,
 };
 use repository::ddb::DDBRepository;
-use actix_web::{HttpServer, App, web::Data, web::scope, middleware::Logger};
-use actix_web_lab::web::spa;
+use actix_web::{HttpServer, App, web::Data, web::scope, middleware::Logger, Result, HttpRequest};
+use actix_files::NamedFile;
+use std::path::PathBuf;
+
+async fn index(req: HttpRequest) -> Result<NamedFile> {
+    let path: PathBuf = req.match_info().query("./dist/index.html").parse().unwrap();
+    Ok(NamedFile::open(path)?)
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    use actix_web::{web};
+
     std::env::set_var("RUST_LOG", "debug");
     std::env::set_var("RUST_BACKTRACE", "1");
     env_logger::init();
@@ -43,12 +51,9 @@ async fn main() -> std::io::Result<()> {
                     .service(fail_task)
             )
             .service(
-                spa()
-                .index_file("./dist/index.html")
-                .static_resources_mount("/")
-                .static_resources_location("./dist")
-                .finish()
-            )
+                scope("/")
+                .route("/index.html", web::get().to(index))
+                )
 
     })
     .bind(("0.0.0.0", 80))?
